@@ -1,7 +1,9 @@
 #!/bin/bash
 
-# Initialize git repository
-git init
+# Initialize git repository if not already initialized
+if [ ! -d .git ]; then
+    git init
+fi
 
 # Create .gitignore file
 cat > .gitignore << EOF
@@ -49,7 +51,36 @@ git add parameters/forcefield/pdbs/dyes/cy7.pdb
 # Commit force field and PDB files
 git commit -m "Add force field files and PDB structures"
 
-# Create GitHub repository
-echo "Please create a new repository on GitHub and then run:"
-echo "git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git"
-echo "git push -u origin main" 
+# Interactive GitHub setup
+echo "GitHub Repository Setup"
+echo "----------------------"
+read -p "Enter your GitHub username: " github_username
+read -p "Enter your repository name: " repo_name
+
+# Check if remote already exists and remove it
+if git remote get-url origin &>/dev/null; then
+    echo "Remote 'origin' already exists. Removing it..."
+    git remote remove origin
+fi
+
+# Set up remote and push using HTTPS
+git remote add origin "https://github.com/$github_username/$repo_name.git"
+git branch -M main
+
+echo "Now you'll need to authenticate with GitHub..."
+echo "You can use either:"
+echo "1. Personal Access Token (recommended)"
+echo "2. GitHub username and password"
+echo ""
+echo "To create a Personal Access Token:"
+echo "1. Go to GitHub.com → Settings → Developer settings → Personal access tokens"
+echo "2. Generate new token with 'repo' scope"
+echo "3. Copy the token and use it as your password when prompted"
+echo ""
+echo "Press Enter when ready to push..."
+read
+
+git push -u origin main
+
+echo "Repository has been pushed to GitHub!"
+echo "You can now visit: https://github.com/$github_username/$repo_name" 
