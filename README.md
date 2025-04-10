@@ -137,8 +137,3 @@ The repository includes example output files to demonstrate the conversion resul
 - awk
 - grep
 - sed
-
-## License
-
-[Your chosen license]
-
