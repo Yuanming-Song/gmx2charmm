@@ -1,6 +1,6 @@
 # GROMACS to CHARMM Force Field Converter
 
-This repository contains scripts for converting GROMACS force field parameters to CHARMM format. The tools are particularly useful for handling dye molecules and their force field parameters.
+This repository contains scripts for converting GROMACS force field parameters to CHARMM format. 
 
 ## Citation
 
