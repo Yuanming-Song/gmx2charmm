@@ -2,6 +2,16 @@
 
 This repository contains scripts for converting GROMACS force field parameters to CHARMM format. The tools are particularly useful for handling dye molecules and their force field parameters.
 
+## Citation
+
+The force field files used in this repository are from:
+```
+CHARMM-DYES: Parameterization of Fluorescent Dyes for Use with the CHARMM Force Field
+Cite this: J. Chem. Theory Comput. 2020, 16, 12, 7817–7824
+```
+
+The original force field files (`ffdyes.itp`, `ffdyesbonded.itp`, `ffdyesnonbonded.itp`, and `merged.rtp`) were developed as part of the CHARMM-DYES force field. This repository provides tools to convert these parameters between GROMACS and CHARMM formats.
+
 ## Unit Conventions and Conversion Factors
 
 ### GROMACS Units
