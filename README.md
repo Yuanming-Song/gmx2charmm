@@ -43,7 +43,7 @@ The scripts use the following conversion factors:
 - Dihedral force constant: 1 kJ/mol = 0.239005736 kcal/mol
 - Nonbonded parameters:
   - ε: Convert using energy factor and make negative (CHARMM uses negative epsilon)
-  - Rmin/2: σ × 0.5612310241546865 (conversion from sigma to Rmin/2)
+  - Rmin/2: σ × 2^(⅙)/2 = σ x 0.5612310241546865 (conversion from sigma to Rmin/2)
 
 ## Scripts
 
