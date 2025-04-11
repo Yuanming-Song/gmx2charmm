@@ -316,6 +316,10 @@ done
 {
     # Write topology reading line and format
     echo "read rtf card append"
+    echo "*"
+    echo "* Generated using combine_str.sh from gmx2charmm"
+    echo "* For more details, visit: https://github.com/Yuanming-Song/gmx2charmm"
+    echo "*"
     
     # Write combination information
     echo "* Combined structure created by combine_str.sh"
