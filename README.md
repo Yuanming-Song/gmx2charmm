@@ -172,8 +172,7 @@ The repository includes example output files to demonstrate the conversion resul
 │       │   └── merged.rtp
 │       └── pdbs/
 │           ├── dyes/
-│           │   └── cy7.pdb
-│           └── with_linker/
+│               └── cy7.pdb
 ├── dyes.prm           # Example output from convert_to_charmm.sh
 ├── CY7.str           # Example output from generate_str.sh
 ├── CY3.str           # Input file for combine_str.sh
@@ -186,4 +185,4 @@ The repository includes example output files to demonstrate the conversion resul
 - bc (for floating-point calculations)
 - awk
 - grep
-- sed
+- se
