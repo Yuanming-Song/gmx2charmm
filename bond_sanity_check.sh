@@ -69,6 +69,11 @@ process_files() {
         fi
     done < "$tmp_bonds"
     
+    # Add message when no bonds are missing
+    if [ $count -eq 0 ]; then
+        echo "All clear! No missing bonds found."
+    fi
+    
     # Cleanup
     rm -f "$tmp_bonds" "$tmp_atoms"
 }
