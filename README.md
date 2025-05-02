@@ -171,6 +171,12 @@ Where:
 - `ATOM1 ATOM2`: Original atom names from the STR file
 - `TYPE1 TYPE2`: Corresponding atom types from the ATOM definitions
 
+If there are more than 5 missing bonds, the script will prompt:
+```
+Show next 5 missing bonds? (y/n)
+```
+This repeats in groups of 5 until all missing bonds are shown or you choose to stop.
+
 ### Example
 
 ```bash
