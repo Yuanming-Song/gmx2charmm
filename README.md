@@ -12,74 +12,6 @@ Cite this: J. Chem. Theory Comput. 2020, 16, 12, 7817–7824
 
 The original force field files (`ffdyes.itp`, `ffdyesbonded.itp`, `ffdyesnonbonded.itp`, and `merged.rtp`) were developed as part of the CHARMM-DYES force field. This repository provides tools to convert these parameters between GROMACS and CHARMM formats.
 
-## File Structure
-```
-.
-├── Scripts/                    # Conversion and validation scripts
-│   ├── convert_to_charmm.sh   # Converts GROMACS parameters to CHARMM format
-│   ├── generate_str.sh        # Generates CHARMM stream files from RTP files
-│   ├── combine_str.sh         # Combines two CHARMM stream files
-│   ├── bond_sanity_check.sh   # Validates bond parameters between STR and PRM files
-│   └── parse_rtp.sh          # Helper script for RTP file processing
-│
-├── Example_output/           # Example output files
-│   ├── dyes.prm             # Converted CHARMM parameters
-│   ├── CY3.str             # Example stream file for CY3
-│   ├── CY7.str             # Example stream file for CY7
-│   └── CY3_CY7_combine.str # Combined structure example
-│
-└── parameters/              # Input parameter files
-    └── forcefield/         # GROMACS force field files
-        ├── charmm36_dyes.ff/
-        │   ├── ffdyesbonded.itp
-        │   ├── ffdyesnonbonded.itp
-        │   └── merged.rtp
-        └── pdbs/
-            └── dyes/
-                └── cy7.pdb
-
-```
-
-## Requirements
-
-- Bash shell
-- bc (for floating-point calculations)
-- awk
-- grep
-- se
-
-## Unit Conventions and Conversion Factors
-
-### GROMACS Units
-- Energy: kJ/mol
-- Length: nm
-- Bond force constant: kJ/mol/nm²
-- Angle force constant: kJ/mol/rad²
-- Dihedral force constant: kJ/mol
-- Nonbonded parameters:
-  - ε (epsilon): kJ/mol
-  - σ (sigma): nm
-
-### CHARMM Units
-- Energy: kcal/mol
-- Length: Å
-- Bond force constant: kcal/mol/Å²
-- Angle force constant: kcal/mol/rad²
-- Dihedral force constant: kcal/mol
-- Nonbonded parameters:
-  - ε (epsilon): kcal/mol
-  - Rmin/2: Å
-
-### Default Conversion Factors
-The scripts use the following conversion factors:
-- Energy: 1 kJ/mol = 0.239005736 kcal/mol
-- Length: 1 nm = 10 Å
-- Bond force constant: 1 kJ/mol/nm² = 23.9005736 kcal/mol/Å²
-- Angle force constant: 1 kJ/mol/rad² = 0.239005736 kcal/mol/rad²
-- Dihedral force constant: 1 kJ/mol = 0.239005736 kcal/mol
-- Nonbonded parameters:
-  - ε: Convert using energy factor and make negative (CHARMM uses negative epsilon)
-  - Rmin/2: σ × 2^(⅙)/2 = σ x 0.5612310241546865 (conversion from sigma to Rmin/2)
 
 ## Scripts
 
@@ -259,3 +191,72 @@ Missing bond: C1 C2 (CG2R61 CG2R61)
 - Bash shell
 - Basic Unix tools (awk, grep)
 - Read permissions for input files
+
+## File Structure
+```
+.
+├── Scripts/                    # Conversion and validation scripts
+│   ├── convert_to_charmm.sh   # Converts GROMACS parameters to CHARMM format
+│   ├── generate_str.sh        # Generates CHARMM stream files from RTP files
+│   ├── combine_str.sh         # Combines two CHARMM stream files
+│   ├── bond_sanity_check.sh   # Validates bond parameters between STR and PRM files
+│   └── parse_rtp.sh          # Helper script for RTP file processing
+│
+├── Example_output/           # Example output files
+│   ├── dyes.prm             # Converted CHARMM parameters
+│   ├── CY3.str             # Example stream file for CY3
+│   ├── CY7.str             # Example stream file for CY7
+│   └── CY3_CY7_combine.str # Combined structure example
+│
+└── parameters/              # Input parameter files
+    └── forcefield/         # GROMACS force field files
+        ├── charmm36_dyes.ff/
+        │   ├── ffdyesbonded.itp
+        │   ├── ffdyesnonbonded.itp
+        │   └── merged.rtp
+        └── pdbs/
+            └── dyes/
+                └── cy7.pdb
+
+```
+
+## Requirements
+
+- Bash shell
+- bc (for floating-point calculations)
+- awk
+- grep
+- se
+
+## Unit Conventions and Conversion Factors
+
+### GROMACS Units
+- Energy: kJ/mol
+- Length: nm
+- Bond force constant: kJ/mol/nm²
+- Angle force constant: kJ/mol/rad²
+- Dihedral force constant: kJ/mol
+- Nonbonded parameters:
+  - ε (epsilon): kJ/mol
+  - σ (sigma): nm
+
+### CHARMM Units
+- Energy: kcal/mol
+- Length: Å
+- Bond force constant: kcal/mol/Å²
+- Angle force constant: kcal/mol/rad²
+- Dihedral force constant: kcal/mol
+- Nonbonded parameters:
+  - ε (epsilon): kcal/mol
+  - Rmin/2: Å
+
+### Default Conversion Factors
+The scripts use the following conversion factors:
+- Energy: 1 kJ/mol = 0.239005736 kcal/mol
+- Length: 1 nm = 10 Å
+- Bond force constant: 1 kJ/mol/nm² = 23.9005736 kcal/mol/Å²
+- Angle force constant: 1 kJ/mol/rad² = 0.239005736 kcal/mol/rad²
+- Dihedral force constant: 1 kJ/mol = 0.239005736 kcal/mol
+- Nonbonded parameters:
+  - ε: Convert using energy factor and make negative (CHARMM uses negative epsilon)
+  - Rmin/2: σ × 2^(⅙)/2 = σ x 0.5612310241546865 (conversion from sigma to Rmin/2)
