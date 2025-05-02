@@ -186,3 +186,69 @@ The repository includes example output files to demonstrate the conversion resul
 - awk
 - grep
 - se
+
+# Bond Sanity Check Tool
+
+This repository contains tools for checking and validating molecular structure files.
+
+## Bond Sanity Check Script (`bond_sanity_check.sh`)
+
+This script performs a sanity check between STR (structure) and PRM (parameter) files by verifying that all bond definitions in the STR file have corresponding parameter definitions in the PRM files.
+
+### Features
+
+- Interactive prompts for input files
+- Checks all BOND definitions in the STR file
+- Maps atoms to their atom types using ATOM definitions
+- Verifies bond parameters exist in PRM files
+- Shows the first 5 missing bonds automatically
+- Option to view additional missing bonds
+- Displays both original atom names and their corresponding atom types
+
+### Usage
+
+1. Make sure the script is executable:
+   ```bash
+   chmod +x bond_sanity_check.sh
+   ```
+
+2. Run the script:
+   ```bash
+   ./bond_sanity_check.sh
+   ```
+
+3. When prompted:
+   - Enter the path to your STR file
+   - Enter the paths to one or more PRM files
+   - Press Enter without input when done adding PRM files
+
+### Output Format
+
+For each missing bond, the script outputs:
+```
+Missing bond: ATOM1 ATOM2 (TYPE1 TYPE2)
+```
+Where:
+- `ATOM1 ATOM2`: Original atom names from the STR file
+- `TYPE1 TYPE2`: Corresponding atom types from the ATOM definitions
+
+### Example
+
+```bash
+$ ./bond_sanity_check.sh
+Bond Sanity Check Script
+=======================
+Enter the path to the STR file: molecule.str
+Enter the path to a PRM file (or press Enter to finish): params1.prm
+Enter the path to a PRM file (or press Enter to finish): params2.prm
+Enter the path to a PRM file (or press Enter to finish): 
+
+Missing bond: C1 C2 (CG2R61 CG2R61)
+...
+```
+
+### Requirements
+
+- Bash shell
+- Basic Unix tools (awk, grep)
+- Read permissions for input files
