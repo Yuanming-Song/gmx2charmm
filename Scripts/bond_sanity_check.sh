@@ -31,6 +31,7 @@ process_files() {
     
     # Process each bond
     count=0
+    missing_bonds=()
     while read -r atom1 atom2; do
         # Get atom types from the mapping
         atom1_type=$(grep "^$atom1 " "$tmp_atoms" | awk '{print $2}')
@@ -55,23 +56,26 @@ process_files() {
         done
         
         if [ $bond_found -eq 0 ]; then
-            ((count++))
-            if [ $count -le 5 ]; then
-                echo "Missing bond: $atom1 $atom2 ($atom1_type $atom2_type)"
-            elif [ $count -eq 6 ]; then
-                read -p "There are more missing bonds. Would you like to see them? (y/n) " answer
+            missing_bonds+=("$atom1 $atom2 ($atom1_type $atom2_type)")
+        fi
+    done < "$tmp_bonds"
+
+    total_missing=${#missing_bonds[@]}
+    if [ $total_missing -eq 0 ]; then
+        echo "All clear! No missing bonds found."
+    else
+        idx=0
+        while [ $idx -lt $total_missing ]; do
+            for ((i=0; i<5 && idx<total_missing; i++, idx++)); do
+                echo "Missing bond: ${missing_bonds[$idx]}"
+            done
+            if [ $idx -lt $total_missing ]; then
+                read -p "Show next 5 missing bonds? (y/n) " answer
                 if [[ $answer != "y" ]]; then
                     break
                 fi
-            else
-                echo "Missing bond: $atom1 $atom2 ($atom1_type $atom2_type)"
             fi
-        fi
-    done < "$tmp_bonds"
-    
-    # Add message when no bonds are missing
-    if [ $count -eq 0 ]; then
-        echo "All clear! No missing bonds found."
+        done
     fi
     
     # Cleanup
