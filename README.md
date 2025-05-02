@@ -12,6 +12,42 @@ Cite this: J. Chem. Theory Comput. 2020, 16, 12, 7817–7824
 
 The original force field files (`ffdyes.itp`, `ffdyesbonded.itp`, `ffdyesnonbonded.itp`, and `merged.rtp`) were developed as part of the CHARMM-DYES force field. This repository provides tools to convert these parameters between GROMACS and CHARMM formats.
 
+## File Structure
+```
+.
+├── Scripts/                    # Conversion and validation scripts
+│   ├── convert_to_charmm.sh   # Converts GROMACS parameters to CHARMM format
+│   ├── generate_str.sh        # Generates CHARMM stream files from RTP files
+│   ├── combine_str.sh         # Combines two CHARMM stream files
+│   ├── bond_sanity_check.sh   # Validates bond parameters between STR and PRM files
+│   └── parse_rtp.sh          # Helper script for RTP file processing
+│
+├── Example_output/           # Example output files
+│   ├── dyes.prm             # Converted CHARMM parameters
+│   ├── CY3.str             # Example stream file for CY3
+│   ├── CY7.str             # Example stream file for CY7
+│   └── CY3_CY7_combine.str # Combined structure example
+│
+└── parameters/              # Input parameter files
+    └── forcefield/         # GROMACS force field files
+        ├── charmm36_dyes.ff/
+        │   ├── ffdyesbonded.itp
+        │   ├── ffdyesnonbonded.itp
+        │   └── merged.rtp
+        └── pdbs/
+            └── dyes/
+                └── cy7.pdb
+
+```
+
+## Requirements
+
+- Bash shell
+- bc (for floating-point calculations)
+- awk
+- grep
+- se
+
 ## Unit Conventions and Conversion Factors
 
 ### GROMACS Units
@@ -156,42 +192,7 @@ The repository includes example output files to demonstrate the conversion resul
    - New bonds between the structures
    - Combined parameter sections
 
-## File Structure
-```
-.
-├── Scripts/                    # Conversion and validation scripts
-│   ├── convert_to_charmm.sh   # Converts GROMACS parameters to CHARMM format
-│   ├── generate_str.sh        # Generates CHARMM stream files from RTP files
-│   ├── combine_str.sh         # Combines two CHARMM stream files
-│   ├── bond_sanity_check.sh   # Validates bond parameters between STR and PRM files
-│   └── parse_rtp.sh          # Helper script for RTP file processing
-│
-├── Example_output/           # Example output files
-│   ├── dyes.prm             # Converted CHARMM parameters
-│   ├── CY3.str             # Example stream file for CY3
-│   ├── CY7.str             # Example stream file for CY7
-│   └── CY3_CY7_combine.str # Combined structure example
-│
-├── parameters/              # Input parameter files
-│   └── forcefield/         # GROMACS force field files
-│       ├── charmm36_dyes.ff/
-│       │   ├── ffdyesbonded.itp
-│       │   ├── ffdyesnonbonded.itp
-│       │   └── merged.rtp
-│       └── pdbs/
-│           └── dyes/
-│               └── cy7.pdb
-│
-└── toppar_c36_jul22/       # CHARMM36 force field parameters
-```
 
-## Requirements
-
-- Bash shell
-- bc (for floating-point calculations)
-- awk
-- grep
-- se
 
 # Bond Sanity Check Tool
 
