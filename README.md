@@ -1,6 +1,6 @@
 # GROMACS to CHARMM Force Field Converter
 
-This repository contains scripts for converting GROMACS force field parameters to CHARMM format. 
+This repository contains scripts for converting GROMACS force field parameters to CHARMM format and tools for structure validation.
 
 ## Citation
 
@@ -157,26 +157,32 @@ The repository includes example output files to demonstrate the conversion resul
    - Combined parameter sections
 
 ## File Structure
-
 ```
 .
-├── convert_to_charmm.sh
-├── generate_str.sh
-├── combine_str.sh
-├── parameters/
-│   └── forcefield/
+├── Scripts/                    # Conversion and validation scripts
+│   ├── convert_to_charmm.sh   # Converts GROMACS parameters to CHARMM format
+│   ├── generate_str.sh        # Generates CHARMM stream files from RTP files
+│   ├── combine_str.sh         # Combines two CHARMM stream files
+│   ├── bond_sanity_check.sh   # Validates bond parameters between STR and PRM files
+│   └── parse_rtp.sh          # Helper script for RTP file processing
+│
+├── Example_output/           # Example output files
+│   ├── dyes.prm             # Converted CHARMM parameters
+│   ├── CY3.str             # Example stream file for CY3
+│   ├── CY7.str             # Example stream file for CY7
+│   └── CY3_CY7_combine.str # Combined structure example
+│
+├── parameters/              # Input parameter files
+│   └── forcefield/         # GROMACS force field files
 │       ├── charmm36_dyes.ff/
-│       │   ├── ffdyes.itp
 │       │   ├── ffdyesbonded.itp
 │       │   ├── ffdyesnonbonded.itp
 │       │   └── merged.rtp
 │       └── pdbs/
-│           ├── dyes/
+│           └── dyes/
 │               └── cy7.pdb
-├── dyes.prm           # Example output from convert_to_charmm.sh
-├── CY7.str           # Example output from generate_str.sh
-├── CY3.str           # Input file for combine_str.sh
-└── CY3_CY7_combine.str  # Example output from combine_str.sh
+│
+└── toppar_c36_jul22/       # CHARMM36 force field parameters
 ```
 
 ## Requirements
