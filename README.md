@@ -289,4 +289,3 @@ The `7_5_2025/` directory contains:
 - Notes and documentation for current projects
 - Temporary working files and experimental data
 
-This directory is ignored by git (see .gitignore) to prevent tracking of temporary working files.
