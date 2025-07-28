@@ -1,32 +1,69 @@
-#he following considerations
+############################################################
+# THE FOLLOWING CONSIDERATIONS
+############################################################
 
-#atom to delete from cy7
+############################################################
+# ATOMS TO DELETE FROM CY7
+############################################################
 
 O1 C33 C32 C31 H45 H22 H23 H24 H25
 
-#atom to delete from cy7 turn... file
+############################################################
+# ATOMS TO DELETE FROM CY7 TURN... FILE
+############################################################
+
 C2 H2 H1 H24 H23 H25 C1
 
-#link between the 2 str structure
+############################################################
+# LINK BETWEEN THE 2 STR STRUCTURES
+############################################################
+
 C30 C3
 
-#in new str file, find the link between renamed atoms
-#new bond: C30 C35
-#New bond type: CA321 CG321
-#to resolve this, add this line to a new prm file then include before running under Bond section
+############################################################
+# IN NEW STR FILE, FIND THE LINK BETWEEN RENAMED ATOMS
+# NEW BOND: C30 C35
+# NEW BOND TYPE: CA321 CG321
+# TO RESOLVE THIS, ADD THIS LINE TO A NEW PRM FILE THEN INCLUDE BEFORE RUNNING UNDER BOND SECTION
+############################################################
+
 CA321     CG321       445.00    1.5300  ! Converted from GROMACS
 
-#find H for C30 and C35 and their corresponding types
-#H C30: H22 H23 (type HD2)
-#H C35: H41 H42 (type HGA2)
+############################################################
+# FIND H FOR C30 AND C35 AND THEIR CORRESPONDING TYPES
+# H C30: H22 H23 (TYPE HD2)
+# H C35: H41 H42 (TYPE HGA2)
+############################################################
 
-# new dihedral thing
-#HD2 CA321 CG321 HGA2 (in dyes.prm file, equivalent to HD2 CA321 CA321 HD2)
+############################################################
+# NEW DIHEDRAL THING
+# HD2 CA321 CG321 HGA2 (IN DYES.PRM FILE, EQUIVALENT TO HD2 CA321 CA321 HD2)
+############################################################
+
 HD2       CA321     CG321     HGA2         0.3930   1     0.0  ! Converted from GROMACS
-# new angle
-#HD2 CA321 CG321 (from dyes.prm file, CA321 CA321 HD2)
-CA321     CA321     HD2       65.726000201  110.2850   0.00000      0.00  ! Converted from GROMACS#HGA2 CG321 CA321CG321  CA321  HD2    131.452000402    110.2850 ! Converted from GROMACS
-#equivalent in cgenff charm prm file
+
+############################################################
+# NEW ANGLE
+# HD2 CA321 CG321 (FROM DYES.PRM FILE, CA321 CA321 HD2)
+############################################################
+
+CA321     CA321     HD2       65.726000201  110.2850   0.00000      0.00  ! Converted from GROMACS
+
+############################################################
+# EQUIVALENT IN CGenFF CHARM PRM FILE
+# HGA2 CG321 CA321
+# CA321     CA321     HD2       65.726000201  110.2850   0.00000      0.00  ! Converted from GROMACS
+############################################################
+
 CG321  CG321  HGA2     26.50    110.10   22.53   2.17900 ! PROT alkane update, adm jr., 3/2/92
-#equivalent in ffbonded.itp, after conversion
+
+############################################################
+# EQUIVALENT IN FFBONDED.ITP, AFTER CONVERSION
+#from line 2527 in 
+#CG321    CG321     HGA2     5   110.100000   221.752000   0.21790000     18853.10
+############################################################
+
 CG321     CG321     HGA2         26.50  110.100000  22.62372      2.18  ! Converted from GROMACS
+
+// Assuming CA321 is CG321 and HD2 is HGA2, the force constants are differed by a factor of 2 between the dyes.prm and cgenff force files.
+// But in cgenff, the term is modified with UB terms.
