@@ -2,6 +2,19 @@
 
 This repository contains scripts for converting GROMACS force field parameters to CHARMM format and tools for structure validation.
 
+## Updates
+
+### July 28, 2025
+- Fixed force constant conversion in `convert_to_charmm.sh` for bond and angle parameters.
+- In GROMACS, bond and angle energies are calculated as V(x) = k*x²/2, while CHARMM uses V(x) = k*x².
+- Updated conversion factors to divide bond and angle force constants by 2 when converting from GROMACS to CHARMM format.
+- Added Urey-Bradley (UB) terms support to angle parameter conversion.
+- GROMACS angle format: atom1 atom2 atom3 func θ0 kθ S0 KUB
+- CHARMM angle format: atom1 atom2 atom3 Kθ θ0 KUB S0
+- KUB force constants use bond force constant conversion (including divide by 2 from GROMACS to CHARMM).
+- S0 distances use length conversion (nm to Å).
+
+
 ## Citation
 
 The force field files used in this repository are from:
@@ -260,9 +273,20 @@ Missing bond: C1 C2 (CG2R61 CG2R61)
 The scripts use the following conversion factors:
 - Energy: 1 kJ/mol = 0.239005736 kcal/mol
 - Length: 1 nm = 10 Å
-- Bond force constant: 1 kJ/mol/nm² = 23.9005736 kcal/mol/Å²
-- Angle force constant: 1 kJ/mol/rad² = 0.239005736 kcal/mol/rad²
+- Bond force constant: 1 kJ/mol/nm² = 11.9502868 kcal/mol/Å² (divided by 2 for GROMACS→CHARMM)
+- Angle force constant: 1 kJ/mol/rad² = 0.119502868 kcal/mol/rad² (divided by 2 for GROMACS→CHARMM)
 - Dihedral force constant: 1 kJ/mol = 0.239005736 kcal/mol
 - Nonbonded parameters:
   - ε: Convert using energy factor and make negative (CHARMM uses negative epsilon)
   - Rmin/2: σ × 2^(⅙)/2 = σ x 0.5612310241546865 (conversion from sigma to Rmin/2)
+
+**Note:** Bond and angle force constants are divided by 2 when converting from GROMACS to CHARMM because GROMACS uses V(x) = k*x²/2 while CHARMM uses V(x) = k*x².
+
+## Working Directory
+
+The `7_5_2025/` directory contains:
+- STR files from ongoing work and development
+- Notes and documentation for current projects
+- Temporary working files and experimental data
+
+This directory is ignored by git (see .gitignore) to prevent tracking of temporary working files.

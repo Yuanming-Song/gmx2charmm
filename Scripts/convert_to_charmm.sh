@@ -4,17 +4,32 @@
 # Energy: kJ/mol to kcal/mol
 ENERGY_CONV=0.239005736
 
+
 # Length: nm to Å
 LENGTH_CONV=10
 
 # Force constants:
 # Bond: kJ/mol/nm² to kcal/mol/Å²
 # (1 kJ/mol/nm² = ENERGY_CONV * 100 kcal/mol/Å²)
-BOND_FORCE_CONV=$(echo "scale=2; $ENERGY_CONV * 0.01 " | bc)
+# Function to count decimal places
+count_decimals() {
+    local num="$1"
+    echo "$num" | awk -F. '{if (NF>1) print length($2); else print 0}'
+}
+
+# Get decimal places for ENERGY_CONV
+ENERGY_DECIMALS=$(count_decimals "$ENERGY_CONV")
+
+# Note: GROMACS uses V(x) = k*x²/2, CHARMM uses V(x) = k*x², so divide by 2
+# Bond: ENERGY_DECIMALS + 2 decimal places
+BOND_DECIMALS=$((ENERGY_DECIMALS + 2))
+BOND_FORCE_CONV=$(awk -v e="$ENERGY_CONV" -v d="$BOND_DECIMALS" 'BEGIN {printf "%.*f", d, e * 0.01 / 2}')
 
 # Angle: kJ/mol/rad² to kcal/mol/rad²
 # (1 kJ/mol/rad² = ENERGY_CONV kcal/mol/rad²)
-ANGLE_FORCE_CONV=0.239005736
+# Note: GROMACS uses V(x) = k*x²/2, CHARMM uses V(x) = k*x², so divide by 2
+# Angle: same decimal places as ENERGY_CONV
+ANGLE_FORCE_CONV=$(awk -v e="$ENERGY_CONV" -v d="$ENERGY_DECIMALS" 'BEGIN {printf "%.*f", d, e / 2}')
 
 # Dihedral: kJ/mol to kcal/mol
 # (1 kJ/mol = ENERGY_CONV kcal/mol)
@@ -111,8 +126,8 @@ show_conversion_menu() {
         echo "Current conversion factors:"
         echo "1. Energy (kJ/mol to kcal/mol): $ENERGY_CONV"
         echo "2. Length (nm to Å): $LENGTH_CONV"
-        echo "3. Bond force constant (kJ/mol/nm² to kcal/mol/Å²): $BOND_FORCE_CONV"
-        echo "4. Angle force constant (kJ/mol/rad² to kcal/mol/rad²): $ANGLE_FORCE_CONV"
+        echo "3. Bond force constant (kJ/mol/nm² to kcal/mol/Å², divided by 2 for GROMACS→CHARMM): $BOND_FORCE_CONV"
+        echo "4. Angle force constant (kJ/mol/rad² to kcal/mol/rad², divided by 2 for GROMACS→CHARMM): $ANGLE_FORCE_CONV"
         echo "5. Dihedral force constant (kJ/mol to kcal/mol): $DIHEDRAL_FORCE_CONV"
         echo "6. None (proceed to next section)"
         echo ""
@@ -121,8 +136,10 @@ show_conversion_menu() {
         case $choice in
             1)
                 ENERGY_CONV=$(get_numeric_input "Enter new energy conversion factor" "$ENERGY_CONV")
-                BOND_FORCE_CONV=$(echo "scale=2; $ENERGY_CONV * 0.01" | bc)
-                ANGLE_FORCE_CONV=$ENERGY_CONV
+                ENERGY_DECIMALS=$(count_decimals "$ENERGY_CONV")
+                BOND_DECIMALS=$((ENERGY_DECIMALS + 2))
+                BOND_FORCE_CONV=$(awk -v e="$ENERGY_CONV" -v d="$BOND_DECIMALS" 'BEGIN {printf "%.*f", d, e * 0.01 / 2}')
+                ANGLE_FORCE_CONV=$(awk -v e="$ENERGY_CONV" -v d="$ENERGY_DECIMALS" 'BEGIN {printf "%.*f", d, e / 2}')
                 DIHEDRAL_FORCE_CONV=$ENERGY_CONV
                 ;;
             2)
@@ -214,8 +231,8 @@ echo ""
 echo "Conversion factors:"
 echo "1. Energy: $ENERGY_CONV"
 echo "2. Length: $LENGTH_CONV"
-echo "3. Bond force: $BOND_FORCE_CONV"
-echo "4. Angle force: $ANGLE_FORCE_CONV"
+echo "3. Bond force (divided by 2): $BOND_FORCE_CONV"
+echo "4. Angle force (divided by 2): $ANGLE_FORCE_CONV"
 echo "5. Dihedral force: $DIHEDRAL_FORCE_CONV"
 echo ""
 echo "Section processing:"
@@ -337,7 +354,20 @@ if [ "$process_angles" = true ]; then
             k=$(echo $line | awk '{print $6}')
             k=$(echo "scale=2; $k * $ANGLE_FORCE_CONV" | bc)
             theta=$(echo $line | awk '{print $5}')
-            echo "$atom1  $atom2  $atom3    $k    $theta ! Converted from GROMACS" >> $OUTPUT_PRM
+            
+            # Parse Urey-Bradley terms (columns 7 and 8)
+            kub=$(echo $line | awk '{print $8}')
+            s0=$(echo $line | awk '{print $7}')
+            
+            if [ -n "$kub" ] && [ "$kub" != "0" ] && [ "$kub" != "" ]; then
+                # Convert KUB using bond force constant conversion (divided by 2)
+                kub=$(awk -v e="$kub" -v f="$BOND_FORCE_CONV" -v d="5" 'BEGIN {printf "%.*f", d, e * f}')
+                # Convert S0 using length conversion
+                s0=$(awk -v e="$s0" -v f="$LENGTH_CONV" -v d="2" 'BEGIN {printf "%.*f", d, e * f}')
+                printf "%-8s  %-8s  %-8s  %8s  %8s  %8s  %8s  ! Converted from GROMACS\n" "$atom1" "$atom2" "$atom3" "$k" "$theta" "$kub" "$s0" >> $OUTPUT_PRM
+            else
+                printf "%-8s  %-8s  %-8s  %8s  %8s  ! Converted from GROMACS\n" "$atom1" "$atom2" "$atom3" "$k" "$theta" >> $OUTPUT_PRM
+            fi
         done
     elif [ -f "$COMBINED_ITP" ]; then
         get_section "$COMBINED_ITP" "angletypes" | while read line; do
@@ -347,7 +377,20 @@ if [ "$process_angles" = true ]; then
             k=$(echo $line | awk '{print $6}')
             k=$(echo "scale=2; $k * $ANGLE_FORCE_CONV" | bc)
             theta=$(echo $line | awk '{print $5}')
-            echo "$atom1  $atom2  $atom3    $k    $theta ! Converted from GROMACS" >> $OUTPUT_PRM
+            
+            # Parse Urey-Bradley terms (columns 7 and 8)
+            kub=$(echo $line | awk '{print $8}')
+            s0=$(echo $line | awk '{print $7}')
+            
+            if [ -n "$kub" ] && [ "$kub" != "0" ] && [ "$kub" != "" ]; then
+                # Convert KUB using bond force constant conversion (divided by 2)
+                kub=$(awk -v e="$kub" -v f="$BOND_FORCE_CONV" -v d="5" 'BEGIN {printf "%.*f", d, e * f}')
+                # Convert S0 using length conversion
+                s0=$(awk -v e="$s0" -v f="$LENGTH_CONV" -v d="2" 'BEGIN {printf "%.*f", d, e * f}')
+                printf "%-8s  %-8s  %-8s  %8s  %8s  %8s  %8s  ! Converted from GROMACS\n" "$atom1" "$atom2" "$atom3" "$k" "$theta" "$kub" "$s0" >> $OUTPUT_PRM
+            else
+                printf "%-8s  %-8s  %-8s  %8s  %8s  ! Converted from GROMACS\n" "$atom1" "$atom2" "$atom3" "$k" "$theta" >> $OUTPUT_PRM
+            fi
         done
     else
         echo "Warning: No ITP file found containing angle types"
